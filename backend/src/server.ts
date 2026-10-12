@@ -70,7 +70,7 @@ app.use(
   }),
 );
 
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 // image preview
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
