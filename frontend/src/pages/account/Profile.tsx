@@ -11,9 +11,9 @@ import {
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import Spinner from "../../components/ui/Spinner";
+import Avatar from "../../components/ui/Avatar";
 import type { UpdateProfilePayload } from "../../types";
 import {
-  getInitial,
   getUsernameFromEmail,
   revokeObjectUrls,
   validateAvatarFile,
@@ -37,7 +37,6 @@ export default function Profile() {
   const [fileError, setFileError] = useState("");
 
   const email = profile?.email ?? user?.email ?? "";
-  const initial = getInitial(email);
   const username = getUsernameFromEmail(email);
 
   useEffect(() => {
@@ -128,7 +127,7 @@ export default function Profile() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-sm text-navy-500 hover:text-brand-600 mb-8 transition-colors group"
+          className="flex items-center gap-2 text-sm text-navy-500 hover:text-navy-900 mb-8 transition-colors group"
         >
           <ArrowLeft
             className="w-4 h-4 group-hover:-translate-x-1 transition-transform"
@@ -153,7 +152,7 @@ export default function Profile() {
         )}
 
         <form onSubmit={handleAvatarSubmit} className="neu-card p-6 sm:p-8 mb-6">
-          <h2 className="text-lg font-bold text-navy-900 mb-5">
+          <h2 className="text-lg font-bold text-navy-950 mb-5">
             Profile picture
           </h2>
 
@@ -166,9 +165,7 @@ export default function Profile() {
                   className="w-24 h-24 rounded-full object-cover border border-navy-200"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-brand-500 flex items-center justify-center text-white text-3xl font-bold">
-                  {initial}
-                </div>
+                <Avatar name={profile?.nickname || email} size="xl" />
               )}
             </div>
 
@@ -206,7 +203,7 @@ export default function Profile() {
                 </p>
               )}
               {fileError ? (
-                <p className="mt-3 text-sm text-navy-950 font-semibold">{fileError}</p>
+                <p className="mt-3 text-sm text-red-600 font-medium">{fileError}</p>
               ) : (
                 <p className="mt-3 text-xs text-navy-400">
                   JPEG or PNG, up to 2MB.
@@ -217,7 +214,7 @@ export default function Profile() {
         </form>
 
         <form onSubmit={handleDetailsSubmit} className="neu-card p-6 sm:p-8">
-          <h2 className="text-lg font-bold text-navy-900 mb-5">
+          <h2 className="text-lg font-bold text-navy-950 mb-5">
             Personal details
           </h2>
 

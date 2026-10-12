@@ -1,110 +1,104 @@
 import { Link, useLocation } from "react-router-dom";
-import { Layers } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useAuthStore } from "../../stores/authStore";
 import { useLogout } from "../../hooks/useAuth";
 import { useProfile } from "../../hooks/useAccount";
-import { getInitial, getUsernameFromEmail } from "../../helpers";
+import { getUsernameFromEmail } from "../../helpers";
 import Button from "../ui/Button";
+import Avatar from "../ui/Avatar";
+import Logo from "../ui/Logo";
+
+const NAV_LINKS = [
+  { to: "/blog", label: "Feed", match: (p: string) => p.startsWith("/blog") && !p.startsWith("/blog/create") },
+  { to: "/blog/create", label: "Write", match: (p: string) => p.startsWith("/blog/create") },
+  { to: "/account", label: "Profile", match: (p: string) => p.startsWith("/account") },
+];
 
 export default function Navbar() {
   const user = useAuthStore((s) => s.user);
   const logout = useLogout();
-  const location = useLocation();
-  const isAuthPage = location.pathname.startsWith("/auth");
+  const { pathname } = useLocation();
+  const isAuthPage = pathname.startsWith("/auth");
   const isAuthenticated = !!user;
   const { data: profile } = useProfile(isAuthenticated);
+  const displayName = profile?.nickname || getUsernameFromEmail(user?.email);
 
   return (
     <nav className="sticky top-0 z-50 glass-card">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-navy-950 flex items-center justify-center transition-colors group-hover:bg-navy-800">
-              <Layers className="w-5 h-5 text-white" aria-hidden="true" />
+        <div className="flex items-center justify-between h-16">
+          <Logo hideWordmarkOnMobile />
+
+          {!isAuthPage && isAuthenticated && (
+            <div className="hidden sm:flex items-center gap-1 rounded-full bg-navy-100/70 p-1">
+              {NAV_LINKS.map((link) => {
+                const active = link.match(pathname);
+                return (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    aria-current={active ? "page" : undefined}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                      active
+                        ? "bg-white text-navy-950 shadow-sm"
+                        : "text-navy-500 hover:text-navy-900"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
             </div>
-            <span className="hidden min-[460px]:block text-xl font-bold text-navy-900 tracking-tight">
-              YarnHam
-            </span>
-          </Link>
+          )}
 
           {!isAuthPage && (
-            <div className="hidden sm:flex items-center gap-1">
-              {isAuthenticated && (
+            <div className="flex items-center gap-2">
+              {isAuthenticated ? (
                 <>
                   <Link
-                    to="/blog"
-                    className="px-4 py-2 rounded-full text-sm font-semibold text-navy-700 hover:bg-white/80 hover:shadow-sm transition-all"
-                  >
-                    Feeds
-                  </Link>
-                  <Link
-                    to="/blog/create"
-                    className="px-4 py-2 rounded-full text-sm font-semibold text-navy-700 hover:bg-white/80 hover:shadow-sm transition-all"
-                  >
-                    Post
-                  </Link>
-                  <Link
                     to="/account"
-                    className="px-4 py-2 rounded-full text-sm font-semibold text-navy-700 hover:bg-white/80 hover:shadow-sm transition-all"
+                    className="flex items-center gap-2.5 rounded-full py-1 pl-1 pr-1 sm:pr-3 hover:bg-navy-100 transition-colors"
+                    title="Your profile"
                   >
-                    Profile
+                    <Avatar
+                      name={displayName}
+                      src={profile?.avatar}
+                      size="sm"
+                    />
+                    <span className="hidden sm:block text-sm font-medium text-navy-700 max-w-[140px] truncate">
+                      {displayName}
+                    </span>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => logout.mutate()}
+                    isLoading={logout.isPending}
+                    aria-label="Sign out"
+                    title="Sign out"
+                    className="!px-2.5"
+                  >
+                    {!logout.isPending && (
+                      <LogOut className="w-4 h-4" aria-hidden="true" />
+                    )}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/auth/login">
+                    <Button variant="ghost" size="sm">
+                      Log in
+                    </Button>
+                  </Link>
+                  <Link to="/auth/register">
+                    <Button variant="primary" size="sm">
+                      Start writing
+                    </Button>
                   </Link>
                 </>
               )}
             </div>
           )}
-
-          <div className="flex items-center gap-3">
-            {!isAuthPage && (
-              <>
-                {isAuthenticated ? (
-                  <div className="flex items-center gap-3">
-                    <Link
-                      to="/account"
-                      className="flex items-center gap-2 group"
-                      title="Your profile"
-                    >
-                      {profile?.avatar ? (
-                        <img
-                          src={profile.avatar}
-                          alt="Your avatar"
-                          className="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-md"
-                        />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-navy-950 flex items-center justify-center text-white text-xs font-bold">
-                          {getInitial(user?.email)}
-                        </div>
-                      )}
-                      <span className="hidden sm:block text-sm font-semibold text-navy-700 group-hover:text-navy-900 transition-colors">
-                        {profile?.nickname || getUsernameFromEmail(user?.email)}
-                      </span>
-                    </Link>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => logout.mutate()}
-                      isLoading={logout.isPending}
-                    >
-                      Sign Out
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Link to="/auth/login">
-                      <Button variant="ghost" size="sm">
-                        Log In
-                      </Button>
-                    </Link>
-                    <Link to="/auth/register">
-                      <Button variant="primary" size="sm">
-                        Get Started
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
         </div>
       </div>
     </nav>

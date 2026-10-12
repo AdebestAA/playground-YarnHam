@@ -2,7 +2,7 @@ import { type ButtonHTMLAttributes } from "react";
 import { LoaderCircle } from "lucide-react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost";
+  variant?: "primary" | "accent" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
 }
@@ -17,10 +17,13 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "inline-flex items-center justify-center font-bold rounded-full transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center font-semibold rounded-full transition-all duration-200 cursor-pointer active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100";
 
   const variants: Record<string, string> = {
-    primary: "text-white bg-navy-950 hover:bg-navy-800 active:bg-navy-900",
+    primary:
+      "text-white bg-navy-950 hover:bg-navy-800",
+    accent:
+      "text-white bg-brand-600 hover:bg-brand-700",
     secondary:
       "bg-white border border-navy-300 text-navy-900 hover:border-navy-400 hover:bg-navy-50 active:bg-navy-100",
     outline:

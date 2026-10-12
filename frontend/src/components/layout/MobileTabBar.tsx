@@ -7,14 +7,14 @@ export default function MobileTabBar() {
   const tabs = [
     {
       to: "/blog",
-      label: "Feeds",
+      label: "Feed",
       active:
         pathname.startsWith("/blog") && !pathname.startsWith("/blog/create"),
       icon: House,
     },
     {
       to: "/blog/create",
-      label: "Create",
+      label: "Write",
       active: pathname.startsWith("/blog/create"),
       icon: SquarePlus,
     },
@@ -40,7 +40,7 @@ export default function MobileTabBar() {
               to={tab.to}
               aria-current={tab.active ? "page" : undefined}
               className={`relative flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-semibold transition-colors ${
-                tab.active ? "text-navy-900" : "text-navy-400"
+                tab.active ? "text-brand-600" : "text-navy-400"
               }`}
             >
               {tab.active && (

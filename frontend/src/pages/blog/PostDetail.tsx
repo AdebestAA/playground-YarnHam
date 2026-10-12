@@ -7,8 +7,9 @@ import { useAuthStore } from "../../stores/authStore";
 import Spinner from "../../components/ui/Spinner";
 import Button from "../../components/ui/Button";
 import Textarea from "../../components/ui/Textarea";
-import { ArrowLeft, Heart, MessageCircle, MessageSquare } from "lucide-react";
-import { formatDate, getInitial, getUsernameFromEmail } from "../../helpers";
+import Avatar from "../../components/ui/Avatar";
+import { ArrowLeft, FileQuestion, Heart, MessageCircle, MessageSquare } from "lucide-react";
+import { formatDate, getUsernameFromEmail } from "../../helpers";
 
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
@@ -58,8 +59,8 @@ export default function PostDetail() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="text-6xl mb-4">🔍</div>
-          <h2 className="text-2xl font-bold text-navy-900 mb-2">Post not found</h2>
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-navy-100"><FileQuestion className="h-6 w-6 text-navy-500" aria-hidden="true" /></div>
+          <h2 className="text-2xl font-bold text-navy-950 mb-2">Post not found</h2>
           <p className="text-navy-500 mb-6">This post doesn't exist or has been removed.</p>
           <Button onClick={() => navigate("/blog")}>Back to Blog</Button>
         </div>
@@ -69,10 +70,10 @@ export default function PostDetail() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <button
           onClick={() => navigate("/blog")}
-          className="flex items-center gap-2 text-sm text-navy-500 hover:text-brand-600 mb-8 transition-colors group"
+          className="flex items-center gap-2 text-sm text-navy-500 hover:text-navy-900 mb-8 transition-colors group"
         >
           <ArrowLeft
             className="w-4 h-4 group-hover:-translate-x-1 transition-transform"
@@ -81,13 +82,11 @@ export default function PostDetail() {
           Back to all posts
         </button>
 
-        <article className="neu-card p-5 sm:p-10 mb-8">
+        <article className="neu-card p-5 sm:p-10 mb-6">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-full bg-navy-950 flex items-center justify-center text-white font-bold text-lg">
-              {(post.nickname?.trim()?.charAt(0) || "?").toUpperCase()}
-            </div>
+            <Avatar name={post.nickname?.trim() || "Anonymous"} size="lg" />
             <div>
-              <p className="font-semibold text-navy-900">
+              <p className="font-semibold text-navy-900 leading-tight">
                 {post.nickname?.trim() || "Anonymous"}
               </p>
               <p className="text-sm text-navy-400">{formatDate(post.created_at)}</p>
@@ -126,7 +125,7 @@ export default function PostDetail() {
             </div>
           ) : (
             <>
-              <p className="text-navy-700 leading-relaxed whitespace-pre-wrap text-lg">
+              <p className="text-navy-800 leading-relaxed whitespace-pre-wrap text-lg break-words">
                 {post.content}
               </p>
               {post.images && post.images.length > 0 && (
@@ -142,9 +141,14 @@ export default function PostDetail() {
                   ))}
                 </div>
               )}
-              <div className="flex items-center gap-6 mt-6 pt-6 border-t border-white/70">
+              <div className="flex items-center gap-6 mt-6 pt-6 border-t border-navy-100">
                 <span className="flex items-center gap-x-2 text-sm text-navy-500">
-                  <Heart size={16} /> {post.likes_count}
+                  <Heart
+                    size={16}
+                    className={post.liked_by_me ? "text-brand-600" : ""}
+                    fill={post.liked_by_me ? "currentColor" : "none"}
+                  />{" "}
+                  {post.likes_count}
                   <span className="text-navy-400">likes</span>
                 </span>
                 <span className="flex items-center gap-x-2 text-sm text-navy-500">
@@ -157,7 +161,7 @@ export default function PostDetail() {
         </article>
 
         <div className="neu-card p-5 sm:p-10">
-          <h3 className="text-xl font-bold text-navy-900 mb-6 flex items-center gap-2">
+          <h3 className="text-lg font-bold text-navy-950 mb-6 flex items-center gap-2">
             <MessageCircle className="w-5 h-5 text-brand-600" aria-hidden="true" />
             Discussion
             {comments && (
@@ -165,29 +169,33 @@ export default function PostDetail() {
             )}
           </h3>
 
-          <div className="space-y-4 mb-8">
+          <div className="space-y-5 mb-8">
             {commentsLoading ? (
               <div className="flex justify-center py-8">
                 <Spinner size="sm" />
               </div>
             ) : comments && comments.length > 0 ? (
-              comments.map((c) => (
-                <div key={c.id} className="neu-inset p-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-navy-950 text-white text-[10px] font-bold">
-                      {getInitial(c.user_email)}
-                    </span>
-                    <span className="text-xs font-semibold text-navy-700">
-                      {getUsernameFromEmail(c.user_email, c.user_email)}
-                    </span>
-                    <span className="text-xs text-navy-400">{formatDate(c.created_at)}</span>
+              comments.map((c) => {
+                const author = getUsernameFromEmail(c.user_email, c.user_email);
+                return (
+                  <div key={c.id} className="flex gap-3">
+                    <Avatar name={author} size="sm" />
+                    <div className="flex-1 min-w-0 neu-inset px-4 py-3">
+                      <div className="flex flex-wrap items-baseline gap-x-2 mb-1">
+                        <span className="text-sm font-semibold text-navy-900">
+                          {author}
+                        </span>
+                        <span className="text-xs text-navy-400">{formatDate(c.created_at)}</span>
+                      </div>
+                      <p className="text-navy-700 text-[15px] leading-relaxed break-words">{c.comment}</p>
+                    </div>
                   </div>
-                  <p className="text-navy-600 text-sm leading-relaxed">{c.comment}</p>
-                </div>
-              ))
+                );
+              })
             ) : (
-              <div className="text-center py-8">
-                <p className="text-navy-400">No comments yet. Start the conversation!</p>
+              <div className="neu-inset text-center py-10 px-4">
+                <p className="font-semibold text-navy-800">No replies yet</p>
+                <p className="text-sm text-navy-500 mt-1">Be the first to say something.</p>
               </div>
             )}
           </div>

@@ -1,5 +1,10 @@
 export { timeAgo, formatDate } from "./date";
-export { getInitial, getUsernameFromEmail, onlyDigits } from "./string";
+export {
+  getInitial,
+  getUsernameFromEmail,
+  getAvatarColor,
+  onlyDigits,
+} from "./string";
 export {
   MAX_POST_IMAGES,
   AVATAR_MAX_SIZE,

@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
 /* ============================================================
-   YARNHAM DESIGN SYSTEM — strictly monochrome.
-   Two colors: black and white (plus neutral grays for text).
-   Flat surfaces, 1px hairline borders, pill buttons. No
-   gradients, no glows, no decorative animations.
+   YARNHAM DESIGN SYSTEM
+   Black ink, cool slate neutrals, one blue accent. Inter for
+   everything. Flat surfaces, hairline borders, no gradients.
    ============================================================ */
 @theme {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+
   /* ── Neutrals: text, borders, surfaces ── */
   --color-navy-50: #f7f8fa;
   --color-navy-100: #eef0f3;
@@ -20,21 +22,21 @@
   --color-navy-900: #14181d;
   --color-navy-950: #0b0e11;
 
-  /* ── Accent: solid black — buttons, avatars, marks ── */
-  --color-brand-50: #f5f5f5;
-  --color-brand-100: #e5e5e5;
-  --color-brand-200: #d4d4d4;
-  --color-brand-300: #a3a3a3;
-  --color-brand-400: #525252;
-  --color-brand-500: #000000; /* primary accent */
-  --color-brand-600: #1a1a1a; /* accent hover */
-  --color-brand-700: #262626;
-  --color-brand-800: #000000;
-  --color-brand-900: #000000;
-  --color-brand-950: #000000;
+  /* ── Accent: blue ── */
+  --color-brand-50: #eff5ff;
+  --color-brand-100: #dbe8ff;
+  --color-brand-200: #bfd5ff;
+  --color-brand-300: #93b8fd;
+  --color-brand-400: #5f91f8;
+  --color-brand-500: #2f6bf0;
+  --color-brand-600: #1f55d6;
+  --color-brand-700: #1b45ad;
+  --color-brand-800: #1c3c8b;
+  --color-brand-900: #1c356f;
+  --color-brand-950: #142145;
 
   /* ── Surfaces ── */
-  --color-paper: #ffffff;
+  --color-paper: #f7f8fa;
   --color-card: #ffffff;
 }
 
@@ -50,8 +52,7 @@
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      Helvetica, Arial, sans-serif;
+    font-family: var(--font-sans);
     background-color: #ffffff;
     color: var(--color-navy-900);
     -webkit-font-smoothing: antialiased;
@@ -73,22 +74,34 @@
   }
 
   ::selection {
-    background: #000000;
-    color: #ffffff;
+    background: var(--color-brand-100);
+    color: var(--color-navy-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
   }
 }
 
 @layer utilities {
-  /* ── Card: flat white, hairline border, zero shadow ── */
+  /* ── Card: white, hairline border, barely-there shadow ── */
   .neu-card {
     background: var(--color-card);
     border-radius: 1rem;
     border: 1px solid var(--color-navy-200);
+    box-shadow: 0 1px 2px rgb(11 14 17 / 0.04);
   }
   .neu-card-sm {
     background: var(--color-card);
     border-radius: 0.75rem;
     border: 1px solid var(--color-navy-200);
+  }
+  .neu-card-hover {
+    transition: border-color 0.15s;
+  }
+  .neu-card-hover:hover {
+    border-color: var(--color-navy-300);
   }
 
   /* Muted well for comments / empty states */
@@ -100,22 +113,23 @@
 
   /* ── Top nav: solid white, crisp bottom border ── */
   .glass-card {
-    background: var(--color-card);
-    border-radius: 0;
+    background: #ffffff;
     border-bottom: 1px solid var(--color-navy-200);
   }
 
-  /* ── Input: hairline border, black focus ring ── */
+  /* ── Input: hairline border, blue focus ring ── */
   .neu-input {
     background: #ffffff;
     border: 1px solid var(--color-navy-300);
     border-radius: 0.75rem;
-    transition: border-color 0.15s;
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
   }
   .neu-input:focus {
     outline: none;
-    border-color: #000000;
-    box-shadow: 0 0 0 1px #000000;
+    border-color: var(--color-brand-500);
+    box-shadow: 0 0 0 3px rgb(47 107 240 / 0.15);
     background: #ffffff;
   }
   .neu-input::placeholder {
