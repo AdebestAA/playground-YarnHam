@@ -1,5 +1,9 @@
 import pool from "../../configs/init-db";
-import { createError, getErrorStatus, pgErrorStatus } from "../../util/create-error";
+import {
+  createError,
+  getErrorStatus,
+  pgErrorStatus,
+} from "../../util/create-error";
 
 export const addComment = async ({
   email,
