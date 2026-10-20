@@ -30,9 +30,3 @@ export async function teardown() {
   await container?.stop();
   console.log("🐳 postgres container removed");
 }
-
-declare module "vitest" {
-  export interface ProvidedContext {
-    databaseUrl: string;
-  }
-}

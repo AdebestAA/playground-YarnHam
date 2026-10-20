@@ -201,7 +201,7 @@ export const signInController = async (
 
     // console.log(accessToken);
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       data: { email: req.body.email, token: accessToken },
     });
