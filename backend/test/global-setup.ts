@@ -1,32 +1,19 @@
-import {
-  PostgreSqlContainer,
-  type StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
 import { execSync } from "child_process";
-import type { TestProject } from "vitest/node";
+import dotenv from "dotenv";
 
-let container: StartedPostgreSqlContainer;
+// runs ONCE before all tests: make sure the test DB has every table
+export function setup() {
+  const testEnv = dotenv.config({ path: ".env.test" }).parsed ?? {};
 
-// runs ONCE before all test files
-export async function setup(project: TestProject) {
-  console.log("🐳 starting postgres container...");
-  container = await new PostgreSqlContainer("postgres:16-alpine").start();
-
-  const databaseUrl = container.getConnectionUri();
-  console.log("🐳 postgres ready at", databaseUrl);
-
-  // same as what you did by hand in step 3
+  const dbUrl = testEnv.DATABASE_URL;
+  if (!dbUrl || !dbUrl.includes("_test")) {
+    throw new Error(
+      "can't run test db at the time, please check if db test or if the db url contains _test",
+    );
+  }
+  // run migration on every test run
   execSync("npx ts-node ./src/db/migrate.ts", {
     stdio: "inherit",
-    env: { ...process.env, DATABASE_URL: databaseUrl },
+    env: { ...process.env, ...testEnv },
   });
-
-  // hand the URL to the test files (we use this in step 6)
-  project.provide("databaseUrl", databaseUrl);
-}
-
-// runs ONCE after all test files finish (same as your docker rm -f)
-export async function teardown() {
-  await container?.stop();
-  console.log("🐳 postgres container removed");
 }
